@@ -38,7 +38,7 @@ def vq_post():
     Method to process POST request to /vq
 
     :return:
-        - A the machted concepts in the given string as a list in a json object:
+        - A the matched concepts in the given string as a list in a json object:
           {result:[list_of_matches]}
         - 400: if request data is not plain text.
     """
