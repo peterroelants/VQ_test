@@ -1,10 +1,35 @@
 # Define a Flask app to host the webservice for returning the concepts of input strings.
 
 from flask import Flask, request, abort, make_response, jsonify
+from flask.ext.cache import Cache
 from concept_store import ConceptStore
 
 # Define the webapp
 app = Flask(__name__)
+# Initialise a cache used to store the concept store
+cache = Cache(app, config={'CACHE_TYPE': 'simple'})
+
+
+@cache.cached(timeout=3600)
+def get_concept_store():
+    """
+    Build and return the concept store and keep it in cache for a day.
+    """
+    return ConceptStore(
+        ['Indian',
+         'Thai',
+         'Sushi',
+         'Caribbean',
+         'Italian',
+         'West Indian',
+         'Pub',
+         'East Asian',
+         'BBQ',
+         'Chinese',
+         'Portuguese',
+         'Spanish',
+         'French',
+         'East European'])
 
 
 @app.route('/vq', methods=['POST'])
@@ -21,7 +46,7 @@ def vq_post():
         # Process the input string and return the matches
         string = str(request.data)
         print string
-        matches = app.concept_store.find_matches(str(request.data))
+        matches = get_concept_store().find_matches(str(request.data))
         return jsonify({'result':matches})
     else:
         # Return a 400 error
@@ -40,21 +65,5 @@ def vq_get():
 
 
 if __name__ == "__main__":
-    # Initialise the concept store, add it as a variable to app
-    app.concept_store = ConceptStore(
-        ['Indian',
-         'Thai',
-         'Sushi',
-         'Caribbean',
-         'Italian',
-         'West Indian',
-         'Pub',
-         'East Asian',
-         'BBQ',
-         'Chinese',
-         'Portuguese',
-         'Spanish',
-         'French',
-         'East European'])
     # Run the webapp
     app.run()
