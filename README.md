@@ -8,13 +8,13 @@ This repository holds the solution to a programming assignment where to goal is 
 
 ### Hash map
 
-The current solution uses a case insensitive hash map (Python dictionary) to store the concepts. Each concept is stored as a tree of hash maps so that concepts containing multiple words can be matched as well as concepts containing only one word. The hash map structure is `{key:result_dict}` where `result_dict` is a dictionary with either a next word as key to store multi word concepts, or `_end` as key, which means that the words leading up to `_end` formed a concept. For example to match the concept 'Indian' the main store will match 'Indian' as a key and return the `result_dict` which contains `_end` as a key to indicate that 'Indian' is matched as a concept. For example to match the concept 'West Indian' the main store will match 'West' as a key and return the `result_dict` which contains 'Indian' as a key, which will contain `_end` as a key to indicate that 'West Indian' is matched as a concept.
+The current solution uses a case insensitive hash map (subclass of the Python dictionary) to store the concepts. Each concept is stored as a tree of hash maps so that concepts containing multiple words can be matched as well as concepts containing only one word. The hash map structure is `{key:result_dict}` where `result_dict` is a dictionary with either a next word as key to store multi word concepts, or `_end` as key, which means that the words leading up to `_end` formed a concept. For example to match the concept 'Indian' the main store will match 'Indian' as a key and return the `result_dict` which contains `_end` as a key to indicate that 'Indian' is matched as a concept (`{'Indian':{`_end`:_}}`). And for example to match the concept 'West Indian' the main store will match 'West' as a key and return the `result_dict` which contains 'Indian' as a key, which will contain `_end` as a key to indicate that 'West Indian' is matched as a concept (`{'West':{'Indian':{`_end`:_}}}`).
 
 The lookup of a key in a hash map can be done in constant time, so for a sentence of length n words the runtime is at most O(n * m) with m the number of words of the longest concept. So the matching speed is not affected by the size of the dictionary.
 
 To divide the concept string and the sentence strings into tokens the Python `split()` command is used. This assumes that no punctuation is used. For more advance tokenization the Python [NLTK library](http://www.nltk.org/api/nltk.tokenize.html) can be used.
 
-We assumed that no spelling errors are made in the input sentences. If spelling errors can be made we can first correct the spelling of the input sentences, or store the possible words edits resulting from errors in the dictionary.
+We assumed that no spelling errors are made in the input sentences. If spelling errors can be made we can first correct the spelling of the input sentences, or store the possible word edits resulting from errors in the dictionary.
 
 ### Alternative solutions
 
@@ -25,7 +25,7 @@ A second alternative is to use [Named-entity recognition (NER)](http://en.wikipe
 
 ## Web service
 
-A web service is provide to match the given concepts to strings. The web service makes use of the [Flask](http://flask.pocoo.org/) module and is coded in [`main.py`](https://raw.githubusercontent.com/peterroelants/VQ_test/master/main.py).
+A web service is provided to match the given concepts to strings. The web service makes use of the [Flask](http://flask.pocoo.org/) module and is coded in [`main.py`](https://raw.githubusercontent.com/peterroelants/VQ_test/master/main.py). The concepts matched by this web service are the concepts from the assignment.
 
 This web service makes use of [`concept_store.py`](https://raw.githubusercontent.com/peterroelants/VQ_test/master/concept_store.py) and stores the concept store in cache. Access to this web service is provided at [http://178.62.253.130/vq](http://178.62.253.130/vq). Requests have to be sent via a POST request with the string as a plain text content type. The web request will return a json file with the matched concepts as a list in this json object: `{result:[list_of_matches]}`.
 
