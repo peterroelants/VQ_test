@@ -30,7 +30,7 @@ class CaseInsensitiveStringDict(dict):
         Overwrite checking if the dictionary contains a key with the key transformed to lower case.
         """
         return super(CaseInsensitiveStringDict, self).__contains__(key.lower())
-    
+
     def __getitem__(self, key):
         """
         Overwrite getting of items so that the key is tranformed into lower case.
